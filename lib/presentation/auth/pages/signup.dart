@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:movie/common/helper/message/display_message.dart';
 import 'package:movie/common/helper/navigation/app_navigation.dart';
 import 'package:movie/core/configs/theme/app_colors.dart';
 import 'package:movie/data/auth/models/signup_req_params.dart';
@@ -28,7 +27,7 @@ class SignupPage extends StatelessWidget {
             SizedBox(height: 20),
             _passwordTextField(),
             SizedBox(height: 40),
-            _signupButton(),
+            _signupButton(context),
             SizedBox(height: 20),
             _signinText(context)
           ],
@@ -65,7 +64,7 @@ class SignupPage extends StatelessWidget {
       ),
     );
   }
-  Widget _signupButton() {
+  Widget _signupButton(BuildContext context) {
     return ReactiveButton(
       title: 'Sign Up',
       activeColor: AppColors.primary,
@@ -78,8 +77,15 @@ class SignupPage extends StatelessWidget {
           ),
         );
       },
-      onSuccess: () {},
-      onFailure: (error) {},
+      onSuccess: () {
+        AppNavigator.pushAndRemove(context, SigninPage());
+      },
+      onFailure: (error) {
+        DisplayMessage.errorMessage(
+          error.toString(),
+          context,
+        );
+      },
     );
   }
   Widget _signinText(BuildContext context) {
@@ -96,7 +102,7 @@ class SignupPage extends StatelessWidget {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                AppNavigator.push(context, const SigninPage());
+                AppNavigator.push(context,  SigninPage());
               },
           ),
         ],

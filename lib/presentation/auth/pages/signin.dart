@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:movie/common/helper/message/display_message.dart';
 import 'package:movie/common/helper/navigation/app_navigation.dart';
 import 'package:movie/core/configs/theme/app_colors.dart';
-import 'package:movie/data/auth/models/signup_req_params.dart';
-import 'package:movie/data/auth/repositories/auth.dart';
-import 'package:movie/data/auth/source/auth_api_service.dart';
-import 'package:movie/domain/auth/auth/usercases/signup.dart';
+import 'package:movie/data/auth/models/signin_req_params.dart';
+import 'package:movie/domain/auth/auth/usercases/signin.dart';
 import 'package:movie/presentation/auth/pages/signup.dart';
+import 'package:movie/presentation/home/pages/home.dart';
 import 'package:reactive_button/reactive_button.dart';
 import 'package:flutter/gestures.dart';
+import 'package:movie/service_locator.dart';
 class SigninPage extends StatelessWidget {
-  const SigninPage({super.key});
-
+  SigninPage({super.key});
+  final TextEditingController _emailCon = TextEditingController();
+  final TextEditingController _passwordCon = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +28,7 @@ class SigninPage extends StatelessWidget {
             SizedBox(height: 20),
             _passwordTextField(),
             SizedBox(height: 40),
-            _signinButton(),
+            _signinButton(context),
             SizedBox(height: 20),
             _signupText(context)
           ],
@@ -44,7 +46,8 @@ class SigninPage extends StatelessWidget {
     );
   }
   Widget _emailTextField() {
-    return const TextField(
+    return TextField(
+      controller: _emailCon,
       decoration: InputDecoration(
         hintText: 'Enter your email',
         labelText: 'Email',
@@ -53,7 +56,8 @@ class SigninPage extends StatelessWidget {
     );
   }
   Widget _passwordTextField() {
-    return const TextField(
+    return TextField(
+      controller: _passwordCon,
       decoration: InputDecoration(
         hintText: 'Enter your password',
         labelText: 'Password',
@@ -61,15 +65,25 @@ class SigninPage extends StatelessWidget {
       ),
     );
   }
-  Widget _signinButton() {
+  Widget _signinButton(BuildContext context) {
     return ReactiveButton(
       title: 'Sign In',
       activeColor: AppColors.primary,
-      onPressed: () async {
-
+      onPressed: () async => sl<SigninUserCase>().call(
+        params: SigninParams(
+          email: _emailCon.text,
+          password: _passwordCon.text,
+        )
+      ),
+      onSuccess: () {
+        AppNavigator.pushAndRemove(context, const HomePage());
       },
-      onSuccess: () {},
-      onFailure: (error) {},
+      onFailure: (error) {
+        DisplayMessage.errorMessage(
+          error.toString(),
+          context,
+        );
+      },
     );
   }
   Widget _signupText(BuildContext context) {
