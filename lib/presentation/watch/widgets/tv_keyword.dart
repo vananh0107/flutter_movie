@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/common/bloc/generic_data_cubit.dart';
 import 'package:movie/common/bloc/generic_data_state.dart';
-import 'package:movie/common/widgets/movie/movie_card.dart';
-import 'package:movie/domain/tv/entities/tv.dart';
-import 'package:movie/domain/tv/usercases/tv.dart';
+import 'package:movie/core/entities/keyword.dart';
+import 'package:movie/domain/tv/usercases/get_keyword.dart';
 import 'package:movie/service_locator.dart';
-class PopularTv extends StatelessWidget {
-  const PopularTv({super.key});
+class TvKeywords extends StatelessWidget {
+  final int tvId;
+  const TvKeywords({required this.tvId,super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GenericDataCubit()..getData<List<TVEntity>>(sl<GetPopularTvUseCase>()),
+      create: (context) => GenericDataCubit()..getData<List<KeywordEntity>>(sl<GetKeyworduUseCase>(), params: tvId),
       child: BlocBuilder<GenericDataCubit, GenericDataState>(
           builder: (context, state) {
             if (state is DataLoading) {
@@ -21,16 +21,9 @@ class PopularTv extends StatelessWidget {
               );
             }
             if (state is DataLoaded) {
-              return SizedBox(
-                  height: 300,
-                  child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemBuilder: (context, index) {
-                        return MovieCard(movieEntity: state.data[index]);
-                      },
-                      separatorBuilder: (context, index) => const SizedBox(width: 16),
-                      itemCount: state.data.length)
+              List<KeywordEntity> keywords = state.data;
+              return Wrap(
+                children: keywords.map((item)=>Chip(label: Text(item.name!))).toList(),
               );
             }
             if (state is FailureLoadData) {

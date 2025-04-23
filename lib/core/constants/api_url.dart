@@ -6,4 +6,7 @@ class ApiUrl {
   static const trendingMovies = '${apiV}movies/trending';
   static const nowPlayingMovies = '${apiV}movies/nowplaying';
   static const popularTV = '${apiV}tv/popular';
+  static const movie = '${apiV}movie/';
+  static const tv = '${apiV}tv/';
+  static const trailerBase = 'https://www.youtube.com/watch?v=';
 }
